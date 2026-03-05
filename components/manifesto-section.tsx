@@ -3,9 +3,11 @@
 import { motion } from "framer-motion"
 import Image from "next/image"
 import { withBasePath } from "@/lib/base-path"
+import type { Language } from "@/lib/language"
 
 const pillars = [
   {
+    key: "noHud",
     icon: (
       <svg
         width="36"
@@ -30,6 +32,7 @@ const pillars = [
     imageAlt: "A dark, ruined archway in a mountainous landscape",
   },
   {
+    key: "systems",
     icon: (
       <svg
         width="36"
@@ -54,6 +57,7 @@ const pillars = [
     imageAlt: "A blacksmith hammering at an anvil by firelight",
   },
   {
+    key: "immersion",
     icon: (
       <svg
         width="36"
@@ -95,7 +99,33 @@ const cardVariants = {
   },
 }
 
-export function ManifestoSection() {
+const frenchPillarCopy: Record<string, { title: string; body: string }> = {
+  noHud: {
+    title: "Pas de HUD. Pas de XP. Pas de Grind.",
+    body: "Oubliez les boucles dopamine. La progression vient des actions, des relations et de la reputation. Votre journal est votre seul registre.",
+  },
+  systems: {
+    title: "Systemes avant scripts.",
+    body: "Pas de marqueurs de quete. Pas de set pieces. Un monde avec ses propres regles ou vous reglez les conflits, construisez des economies et chassez des horreurs discretes.",
+  },
+  immersion: {
+    title: "Immersion totale.",
+    body: "Skyrim rencontre VRChat via le Gaussian Splatting: un monde photorealiste faconne par le rendu neural et la photogrammetrie. Si vous le voyez, il existe.",
+  },
+}
+
+export function ManifestoSection({ language }: { language: Language }) {
+  const copy =
+    language === "fr"
+      ? {
+          kicker: "Le Manifeste",
+          title: "Le Retour Des Anciennes Voies",
+        }
+      : {
+          kicker: "The Manifesto",
+          title: "The Old Ways Return",
+        }
+
   return (
     <section className="relative px-6 py-24 md:py-32">
       {/* Divider */}
@@ -112,10 +142,10 @@ export function ManifestoSection() {
           transition={{ duration: 0.8 }}
         >
           <p className="mb-3 font-sans text-xs uppercase tracking-[0.3em] text-primary">
-            The Manifesto
+            {copy.kicker}
           </p>
           <h2 className="text-balance font-sans text-3xl font-bold uppercase tracking-[0.15em] text-foreground md:text-4xl">
-            The Old Ways Return
+            {copy.title}
           </h2>
         </motion.div>
 
@@ -126,7 +156,12 @@ export function ManifestoSection() {
           whileInView="visible"
           viewport={{ once: true, margin: "-80px" }}
         >
-          {pillars.map((pillar) => (
+          {pillars.map((pillar) => {
+            const translated = language === "fr" ? frenchPillarCopy[pillar.key] : null
+            const title = translated?.title ?? pillar.title
+            const body = translated?.body ?? pillar.body
+
+            return (
             <motion.article
               key={pillar.title}
               variants={cardVariants}
@@ -158,13 +193,13 @@ export function ManifestoSection() {
                 />
 
                 <h3 className="mb-3 font-sans text-base font-semibold uppercase tracking-[0.12em] text-foreground">
-                  {pillar.title}
+                  {title}
                 </h3>
 
                 <div className="mb-3 h-px w-8 bg-primary/30 transition-all duration-500 group-hover:w-12 group-hover:bg-primary/60" />
 
                 <p className="font-serif text-sm italic leading-relaxed text-muted-foreground">
-                  {pillar.body}
+                  {body}
                 </p>
               </div>
 
@@ -174,7 +209,8 @@ export function ManifestoSection() {
                 aria-hidden="true"
               />
             </motion.article>
-          ))}
+            )
+          })}
         </motion.div>
       </div>
     </section>

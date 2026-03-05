@@ -1,6 +1,7 @@
 "use client"
 
 import { motion } from "framer-motion"
+import type { Language } from "@/lib/language"
 
 const milestones = [
   {
@@ -29,7 +30,39 @@ const milestones = [
   },
 ]
 
-export function RoadmapSection() {
+const frenchMilestones: Record<string, { title: string; description: string }> = {
+  I: {
+    title: "Moteur Coeur",
+    description: "Fondations systemes, pipeline rendu et mecaniques gameplay centrales.",
+  },
+  II: {
+    title: "Monde Ouvert",
+    description: "Terrain etendu, ecosystemes dynamiques et narration environnementale.",
+  },
+  III: {
+    title: "Outils Game Master",
+    description: "Toolkit createur pour design narratif et construction du monde.",
+  },
+  IV: {
+    title: "World Engine",
+    description: "Mondes persistants et evolutifs faconnes par les actions des joueurs.",
+  },
+}
+
+export function RoadmapSection({ language }: { language: Language }) {
+  const copy =
+    language === "fr"
+      ? {
+          kicker: "Le Chemin",
+          title: "Feuille De Route",
+          phase: "Phase",
+        }
+      : {
+          kicker: "The Path",
+          title: "Roadmap",
+          phase: "Phase",
+        }
+
   return (
     <section className="relative px-6 py-24 md:py-32">
       {/* Divider */}
@@ -46,10 +79,10 @@ export function RoadmapSection() {
           transition={{ duration: 0.8 }}
         >
           <p className="mb-3 font-sans text-xs uppercase tracking-[0.3em] text-primary">
-            The Path
+            {copy.kicker}
           </p>
           <h2 className="text-balance font-sans text-3xl font-bold uppercase tracking-[0.15em] text-foreground md:text-4xl">
-            Roadmap
+            {copy.title}
           </h2>
         </motion.div>
 
@@ -61,7 +94,13 @@ export function RoadmapSection() {
           />
 
           <div className="flex flex-col gap-12">
-            {milestones.map((milestone, index) => (
+            {milestones.map((milestone, index) => {
+              const translated =
+                language === "fr" ? frenchMilestones[milestone.phase] : null
+              const title = translated?.title ?? milestone.title
+              const description = translated?.description ?? milestone.description
+
+              return (
               <motion.div
                 key={milestone.phase}
                 className="relative flex items-start gap-8 md:gap-0"
@@ -90,17 +129,18 @@ export function RoadmapSection() {
                   }`}
                 >
                   <p className="mb-1 font-sans text-xs uppercase tracking-[0.2em] text-primary">
-                    Phase {milestone.phase}
+                    {copy.phase} {milestone.phase}
                   </p>
                   <h3 className="mb-2 font-sans text-lg font-semibold uppercase tracking-[0.1em] text-foreground">
-                    {milestone.title}
+                    {title}
                   </h3>
                   <p className="text-sm leading-relaxed text-muted-foreground">
-                    {milestone.description}
+                    {description}
                   </p>
                 </div>
               </motion.div>
-            ))}
+              )
+            })}
           </div>
         </div>
       </div>

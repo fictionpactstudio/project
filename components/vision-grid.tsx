@@ -3,9 +3,11 @@
 import { motion } from "framer-motion"
 import Image from "next/image"
 import { withBasePath } from "@/lib/base-path"
+import type { Language } from "@/lib/language"
 
 const visionCards = [
   {
+    key: "roleplay",
     title: "Roleplay",
     description: "Your actions define memory and reputation.",
     image: "/assets/4fists.png",
@@ -38,6 +40,7 @@ const visionCards = [
     ),
   },
   {
+    key: "explore",
     title: "Explore",
     description:
       'A grounded, moody sandbox where "What If?" is always the next question.',
@@ -72,6 +75,7 @@ const visionCards = [
     ),
   },
   {
+    key: "craft",
     title: "Craft",
     description: "A player-driven economy of crafts and consequence.",
     image: "/assets/blacksmith.png",
@@ -137,7 +141,33 @@ const cardVariants = {
   },
 }
 
-export function VisionGrid() {
+const frenchVisionCopy: Record<string, { title: string; description: string }> = {
+  roleplay: {
+    title: "Roleplay",
+    description: "Vos actions definissent memoire et reputation.",
+  },
+  explore: {
+    title: "Explorer",
+    description: "Un sandbox ancre et sombre ou la question Et si ? guide toujours la suite.",
+  },
+  craft: {
+    title: "Fabriquer",
+    description: "Une economie guidee par les joueurs, faite d artisanat et de consequences.",
+  },
+}
+
+export function VisionGrid({ language }: { language: Language }) {
+  const copy =
+    language === "fr"
+      ? {
+          kicker: "La Vision",
+          title: "Trois Piliers",
+        }
+      : {
+          kicker: "The Vision",
+          title: "Three Pillars",
+        }
+
   return (
     <section className="relative px-6 py-24 md:py-32">
       <div className="mx-auto max-w-6xl">
@@ -149,10 +179,10 @@ export function VisionGrid() {
           transition={{ duration: 0.8 }}
         >
           <p className="mb-3 font-sans text-xs uppercase tracking-[0.3em] text-primary">
-            The Vision
+            {copy.kicker}
           </p>
           <h2 className="text-balance font-sans text-3xl font-bold uppercase tracking-[0.15em] text-foreground md:text-4xl">
-            Three Pillars
+            {copy.title}
           </h2>
         </motion.div>
 
@@ -163,7 +193,12 @@ export function VisionGrid() {
           whileInView="visible"
           viewport={{ once: true, margin: "-80px" }}
         >
-          {visionCards.map((card) => (
+          {visionCards.map((card) => {
+            const translated = language === "fr" ? frenchVisionCopy[card.key] : null
+            const title = translated?.title ?? card.title
+            const description = translated?.description ?? card.description
+
+            return (
             <motion.article
               key={card.title}
               variants={cardVariants}
@@ -193,17 +228,18 @@ export function VisionGrid() {
                 </div>
 
                 <h3 className="mb-3 font-sans text-lg font-semibold uppercase tracking-[0.15em] text-foreground">
-                  {card.title}
+                  {title}
                 </h3>
 
                 <div className="mb-4 h-px w-8 bg-primary/30 transition-all duration-500 group-hover:w-12 group-hover:bg-primary/60" />
 
                 <p className="font-serif text-sm italic leading-relaxed text-muted-foreground">
-                  {card.description}
+                  {description}
                 </p>
               </div>
             </motion.article>
-          ))}
+            )
+          })}
         </motion.div>
       </div>
     </section>

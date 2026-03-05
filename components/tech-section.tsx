@@ -1,6 +1,7 @@
 "use client"
 
 import { motion } from "framer-motion"
+import type { Language } from "@/lib/language"
 
 const techItems = [
   {
@@ -64,7 +65,29 @@ const techItems = [
   },
 ]
 
-export function TechSection() {
+const frenchTechCopy: Record<string, { title: string; description: string }> = {
+  "Gaussian Splatting": {
+    title: "Gaussian Splatting",
+    description: "Rendu neural temps reel pour des environnements photorealistes. Des nuages de points vers des mondes immersifs.",
+  },
+  UGC: {
+    title: "UGC",
+    description: "Les joueurs et game masters faconnent factions, artefacts, edits, rumeurs et evenements live. Chaque serveur devient son propre canon vivant.",
+  },
+}
+
+export function TechSection({ language }: { language: Language }) {
+  const copy =
+    language === "fr"
+      ? {
+          kicker: "Sous Le Capot",
+          title: "Innovations Techniques",
+        }
+      : {
+          kicker: "Under the Hood",
+          title: "Technical Innovations",
+        }
+
   return (
     <section className="relative px-6 py-24 md:py-32">
       {/* Divider */}
@@ -81,15 +104,20 @@ export function TechSection() {
           transition={{ duration: 0.8 }}
         >
           <p className="mb-3 font-sans text-xs uppercase tracking-[0.3em] text-primary">
-            Under the Hood
+            {copy.kicker}
           </p>
           <h2 className="text-balance font-sans text-3xl font-bold uppercase tracking-[0.15em] text-foreground md:text-4xl">
-            Technical Innovations
+            {copy.title}
           </h2>
         </motion.div>
 
         <div className="grid gap-12 md:grid-cols-2 md:gap-16">
-          {techItems.map((item, index) => (
+          {techItems.map((item, index) => {
+            const translated = language === "fr" ? frenchTechCopy[item.title] : null
+            const title = translated?.title ?? item.title
+            const description = translated?.description ?? item.description
+
+            return (
             <motion.div
               key={item.title}
               className="group text-center"
@@ -107,16 +135,17 @@ export function TechSection() {
               </div>
 
               <h3 className="mb-4 font-sans text-lg font-semibold uppercase tracking-[0.15em] text-foreground">
-                {item.title}
+                {title}
               </h3>
 
               <div className="mx-auto mb-4 h-px w-8 bg-primary/20" />
 
               <p className="mx-auto max-w-xs text-sm leading-relaxed text-muted-foreground">
-                {item.description}
+                {description}
               </p>
             </motion.div>
-          ))}
+            )
+          })}
         </div>
       </div>
     </section>
