@@ -1,8 +1,24 @@
 "use client"
 
 import { motion } from "framer-motion"
+import type { Language } from "@/lib/language"
 
-export function EngineSection() {
+export function EngineSection({ language }: { language: Language }) {
+  const copy =
+    language === "fr"
+      ? {
+          kicker: "La Definition",
+          title: "Le Moteur",
+          lead: "Nous construisons un moteur de monde vivant roleplay, atmospherique.",
+          body: "Un sandbox VR-first, accessible PC, ou l atmosphere passe avant tout et ou les systemes remplacent les scripts.",
+        }
+      : {
+          kicker: "The Definition",
+          title: "The Engine",
+          lead: "We are building an Atmospheric Roleplaying Living World Engine.",
+          body: "A VR-first, PC-accessible sandbox where atmosphere comes first, and systems replace scripts.",
+        }
+
   return (
     <section className="relative px-6 py-24 md:py-32">
       {/* Subtle ambient light */}
@@ -21,11 +37,11 @@ export function EngineSection() {
         transition={{ duration: 1, ease: "easeOut" }}
       >
         <p className="mb-3 font-sans text-xs uppercase tracking-[0.3em] text-primary">
-          The Definition
+          {copy.kicker}
         </p>
 
         <h2 className="mb-10 text-balance font-sans text-3xl font-bold uppercase tracking-[0.15em] text-foreground md:text-4xl">
-          The Engine
+          {copy.title}
         </h2>
 
         <div className="mx-auto flex items-center justify-center gap-4 mb-10" aria-hidden="true">
@@ -35,11 +51,11 @@ export function EngineSection() {
         </div>
 
         <p className="breathing-text mx-auto max-w-2xl font-serif text-xl italic leading-relaxed text-foreground md:text-2xl lg:text-3xl">
-          We are building an Atmospheric Roleplaying Living World Engine.
+          {copy.lead}
         </p>
 
         <p className="mx-auto mt-6 max-w-xl text-sm leading-relaxed text-muted-foreground md:text-base">
-          A VR-first, PC-accessible sandbox where atmosphere comes first, and systems replace scripts.
+          {copy.body}
         </p>
 
         <div className="mx-auto mt-10 flex items-center justify-center gap-4" aria-hidden="true">

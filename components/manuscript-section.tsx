@@ -2,8 +2,16 @@
 
 import { useState, useCallback } from "react"
 import { motion, AnimatePresence } from "framer-motion"
+import type { Language } from "@/lib/language"
 
-const pages = [
+type ManuscriptPage = {
+  chapter: string
+  title: string
+  body: string
+  footnote: string
+}
+
+const englishPages: ManuscriptPage[] = [
   {
     chapter: "I",
     title: "The Origin",
@@ -24,14 +32,35 @@ const pages = [
   },
 ]
 
-function WaxSeal({ onClick }: { onClick: () => void }) {
+const frenchPages: ManuscriptPage[] = [
+  {
+    chapter: "I",
+    title: "L Origine",
+    body: "Un studio fonde par ses createurs, construit pour les joueurs OG sous-representes, ceux qui se souviennent d une epoque ou les histoires vivaient dans l imagination. C est le jeu video dont revent les joueurs de JDR papier et de LARP depuis les debuts de l informatique.",
+    footnote: "Ne de veterans qui ont refuse d oublier.",
+  },
+  {
+    chapter: "II",
+    title: "La Vision",
+    body: "Skyrim rencontre VR Chat dans le Gaussian Splatting. Un monde low-myth, realiste a la bougie, inspire de World of Darkness.",
+    footnote: "La ou chaque ombre raconte une histoire.",
+  },
+  {
+    chapter: "III",
+    title: "La Tech",
+    body: "Nous combinons photogrammetrie, Gaussian Splatting et strategie UGC sociale pour produire du contenu niveau AAA avec une equipe veterane et agile.",
+    footnote: "L innovation nee de l experience.",
+  },
+]
+
+function WaxSeal({ onClick, label }: { onClick: () => void; label: string }) {
   return (
     <motion.button
       onClick={onClick}
       className="group relative mx-auto mt-10 flex h-20 w-20 items-center justify-center rounded-full border-2 border-[#8B4513]/60 bg-[#8B1A1A] transition-colors duration-500 hover:border-[#FFBF00]/60 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#FFBF00]/50"
       whileHover={{ scale: 1.08 }}
       whileTap={{ scale: 0.95 }}
-      aria-label="Turn the page"
+      aria-label={label}
     >
       {/* Inner seal texture */}
       <div className="absolute inset-1 rounded-full bg-[#6B1010] opacity-80" />
@@ -136,9 +165,34 @@ function SpineStitching() {
   )
 }
 
-export function ManuscriptSection() {
+export function ManuscriptSection({ language }: { language: Language }) {
   const [currentPage, setCurrentPage] = useState(0)
   const [direction, setDirection] = useState(1)
+  const pages = language === "fr" ? frenchPages : englishPages
+  const copy =
+    language === "fr"
+      ? {
+          kicker: "Le Codex",
+          title: "Notre Histoire",
+          chapterPrefix: "Chapitre",
+          previous: "Precedent",
+          next: "Suivant",
+          previousAria: "Page precedente",
+          nextAria: "Page suivante",
+          turnPageAria: "Tourner la page",
+          sealHint: "Brisez le sceau pour tourner la page",
+        }
+      : {
+          kicker: "The Codex",
+          title: "Our Story",
+          chapterPrefix: "Chapter",
+          previous: "Previous",
+          next: "Next",
+          previousAria: "Previous page",
+          nextAria: "Next page",
+          turnPageAria: "Turn the page",
+          sealHint: "Break the seal to turn the page",
+        }
 
   const flipPage = useCallback(
     (newDirection: number) => {
@@ -150,7 +204,7 @@ export function ManuscriptSection() {
         return next
       })
     },
-    [],
+    [pages.length],
   )
 
   const page = pages[currentPage]
@@ -191,10 +245,10 @@ export function ManuscriptSection() {
         transition={{ duration: 1, ease: "easeOut" }}
       >
         <p className="mb-3 font-sans text-xs uppercase tracking-[0.3em] text-primary">
-          The Codex
+          {copy.kicker}
         </p>
         <h2 className="mb-16 text-balance font-sans text-3xl font-bold uppercase tracking-[0.15em] text-foreground md:text-4xl">
-          Our Story
+          {copy.title}
         </h2>
 
         {/* The manuscript book */}
@@ -235,7 +289,7 @@ export function ManuscriptSection() {
                     animate={{ opacity: 1 }}
                     transition={{ delay: 0.3, duration: 0.5 }}
                   >
-                    {"Chapter"} {page.chapter}
+                    {copy.chapterPrefix} {page.chapter}
                   </motion.div>
 
                   {/* Decorative rule */}
@@ -306,7 +360,7 @@ export function ManuscriptSection() {
               <button
                 onClick={() => flipPage(-1)}
                 className="group flex items-center gap-2 font-manuscript text-sm text-[#D4A574]/50 transition-colors duration-300 hover:text-[#FFBF00] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#FFBF00]/50 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
-                aria-label="Previous page"
+                aria-label={copy.previousAria}
               >
                 <svg
                   width="16"
@@ -324,7 +378,7 @@ export function ManuscriptSection() {
                     strokeLinejoin="round"
                   />
                 </svg>
-                <span className="hidden sm:inline">Previous</span>
+                <span className="hidden sm:inline">{copy.previous}</span>
               </button>
 
               <PageNumber current={currentPage} total={pages.length} />
@@ -332,9 +386,9 @@ export function ManuscriptSection() {
               <button
                 onClick={() => flipPage(1)}
                 className="group flex items-center gap-2 font-manuscript text-sm text-[#D4A574]/50 transition-colors duration-300 hover:text-[#FFBF00] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#FFBF00]/50 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
-                aria-label="Next page"
+                aria-label={copy.nextAria}
               >
-                <span className="hidden sm:inline">Next</span>
+                <span className="hidden sm:inline">{copy.next}</span>
                 <svg
                   width="16"
                   height="16"
@@ -355,10 +409,10 @@ export function ManuscriptSection() {
             </div>
 
             {/* Wax seal to flip forward */}
-            <WaxSeal onClick={() => flipPage(1)} />
+            <WaxSeal onClick={() => flipPage(1)} label={copy.turnPageAria} />
 
             <p className="mt-3 font-manuscript text-xs italic text-[#D4A574]/30">
-              {"Break the seal to turn the page"}
+              {copy.sealHint}
             </p>
           </div>
         </div>

@@ -3,10 +3,31 @@
 import { motion } from "framer-motion"
 import Image from "next/image"
 import { withBasePath } from "@/lib/base-path"
+import type { Language } from "@/lib/language"
 
-export function HeroSection() {
+export function HeroSection({ language }: { language: Language }) {
+  const copy =
+    language === "fr"
+      ? {
+          joinUs: "Nous Rejoindre",
+          tagline: "Authenticite, Innovation, Passion",
+        }
+      : {
+          joinUs: "Join Us",
+          tagline: "Authenticity, Innovation, Passion",
+        }
+
   return (
     <section className="relative flex min-h-screen items-center justify-center overflow-hidden">
+      <div className="absolute left-1/2 top-6 z-20 -translate-x-1/2 md:top-8">
+        <a
+          href="#join-us"
+          className="inline-flex items-center justify-center rounded-sm border border-primary/60 bg-primary/10 px-5 py-2 font-sans text-xs font-semibold uppercase tracking-[0.2em] text-primary transition-colors duration-300 hover:border-primary hover:bg-primary/20 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/50"
+        >
+          {copy.joinUs}
+        </a>
+      </div>
+
       {/* Background image */}
       <div className="pointer-events-none absolute inset-0" aria-hidden="true">
         <Image
@@ -69,7 +90,7 @@ export function HeroSection() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.8, ease: "easeOut" }}
           >
-            Authenticity, Innovation, Passion
+            {copy.tagline}
           </motion.p>
 
           {/* Decorative line */}

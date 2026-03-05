@@ -1,8 +1,14 @@
 "use client"
 
 import { motion } from "framer-motion"
+import type { Language } from "@/lib/language"
 
-export function HookSection() {
+export function HookSection({ language }: { language: Language }) {
+  const quote =
+    language === "fr"
+      ? "Vous ne jouez pas une histoire... vous la vivez"
+      : "You don't play a story... you live in one"
+
   return (
     <section className="relative flex items-center justify-center px-6 py-32 md:py-48">
       {/* Subtle amber line accent */}
@@ -28,9 +34,7 @@ export function HookSection() {
 
         <blockquote className="font-serif text-3xl italic leading-relaxed text-foreground md:text-5xl lg:text-6xl">
           <span className="text-primary">{'"'}</span>
-          You don{"'"}t play a story...
-          <br className="hidden md:block" />
-          {" "}you live in one
+          {quote}
           <span className="text-primary">{'"'}</span>
         </blockquote>
 
